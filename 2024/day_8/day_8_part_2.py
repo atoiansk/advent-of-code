@@ -5,7 +5,7 @@ m, n, antenas = parse_input('input.txt')
 
 map = Map(m, n, antenas)
 
-map.print_grid()
+map.print_grid(True)
 
 # print(map.get_antinodes())
 
