@@ -52,7 +52,7 @@ class Map:
         return False
 
     def print_grid(self, all=False):
-        antinodes = self.get_antinodes()
+        antinodes = self.get_antinodes(all)
 
         for i in range(self.m):
             for j in range(self.n):
