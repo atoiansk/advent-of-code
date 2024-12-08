@@ -17,14 +17,10 @@ class Map:
         distance_x = antena_1[0] - antena_2[0]
         distance_y = antena_1[1] - antena_2[1]
 
-        antinodes = set()
-
         antinodes_1 = self.get_antinode_for_antena(antena_1, distance_x, distance_y, all)
         antinodes_2 = self.get_antinode_for_antena(antena_2, -distance_x, -distance_y, all)
 
-        antinodes = antinodes | antinodes_1 | antinodes_2
-
-        return antinodes
+        return antinodes_1 | antinodes_2
 
     def get_antinode_for_antena(self, antena, distance_x, distance_y, all):
         antinodes = set()
