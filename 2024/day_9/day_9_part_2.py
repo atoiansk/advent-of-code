@@ -1,55 +1,60 @@
-from utils import parse_input, calculate_check_sum
+def parse_input(file_name):
+    file = open(file_name, 'r')
+    line = file.readline().strip('\n')
 
-def compact_data(memory):
-    i = len(memory) - 1
+    files = {}
+    empty_spaces = []
+    block_id = 0
+    cumulative_index = 0
 
-    while i > 0:
-        print(i)
-        if memory[i] == '.':
-            i -= 1
-            continue;
+    for i in range(len(line)):
+        char = line[i]
 
-        current_id = memory[i]
-        i_start = i
-
-        while memory[i_start] == current_id:
-            i_start -= 1
-        length = i - i_start
-
-        empty_space = find_empty_space(memory, i_start + 1, length)
-
-        i = i_start
-
-        if len(empty_space) > 0:
-            memory = move_file(memory, i_start + 1, empty_space[0], length)
-
-    return memory
-
-def find_empty_space(memory, file_start_index, file_len):
-    i = 0
-    while i < file_start_index:
-        if memory[i] != '.':
-            i += 1
-            continue
-
-        end_i = i
-        while memory[end_i] == '.':
-           end_i += 1
-
-        len = end_i - i
-
-        if len >= file_len:
-            return [i, end_i - 1]
+        if i % 2 == 0:
+            files.setdefault(block_id, [cumulative_index, int(char)])
+            block_id += 1
         else:
-            i = end_i
-    return []
+            if int(char) == 0:
+                continue
+            empty_spaces.append([cumulative_index, int(char)])
 
-def move_file(memory, file_start_index, empty_start_index, file_length):
-    for i in range (file_length):
-        memory[empty_start_index + i] = memory[file_start_index + i]
-        memory[file_start_index + i] = '.'
-    return memory
+        cumulative_index += int(char)
+    return files, empty_spaces
 
-memory = parse_input('input.txt')
+def compact_data(files, empty_spaces):
+    for key, value in reversed(files.items()):
+        file_start_index, file_length = value
 
-print(calculate_check_sum(compact_data(memory)))
+        for i in range(len(empty_spaces)):
+            empty_start_index, empty_length = empty_spaces[i]
+
+            if empty_start_index >= file_start_index:
+                continue
+
+            if empty_length < file_length:
+                continue
+
+            new_start_index = empty_start_index + file_length
+            new_length = empty_length - file_length
+            empty_spaces[i] = [new_start_index, new_length]
+            files[key] = [empty_start_index, file_length]
+
+            break;
+    return files
+
+def calculate_check_sum(compacted_files):
+    check_sum = 0
+
+    for key, value in files.items():
+        start_index, length = value
+
+        for i in range(length):
+            check_sum += int(key) * (start_index + i)
+
+    return check_sum
+
+files, empty_spaces = parse_input('input.txt')
+compacted_files = compact_data(files, empty_spaces)
+
+# print(compacted_files)
+print(calculate_check_sum(compacted_files))
