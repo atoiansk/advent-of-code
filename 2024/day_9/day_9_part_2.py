@@ -45,7 +45,7 @@ def compact_data(files, empty_spaces):
 def calculate_check_sum(compacted_files):
     check_sum = 0
 
-    for key, value in files.items():
+    for key, value in compacted_files.items():
         start_index, length = value
 
         for i in range(length):
