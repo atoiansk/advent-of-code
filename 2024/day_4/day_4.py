@@ -1,6 +1,3 @@
-from collections import deque
-import numpy as np
-
 def get_input():
     file = open('input.txt', 'r')
     lines = file.readlines()
