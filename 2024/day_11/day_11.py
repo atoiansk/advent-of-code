@@ -25,19 +25,18 @@ def blink(element, times):
         return map[(element, times)]
 
     if times == 0:
-        return 1
-
-    if element == 0:
-        map[(element, times)] = blink(1, times - 1)
-        return blink(1, times - 1)
+        result = 1
+    elif element == 0:
+        result = blink(1, times - 1)
     elif len(str(element)) % 2 == 0:
         string = str(element)
         middle = len(string) // 2
-        map[(element, times)] = blink(int(string[:middle]), times - 1) + blink(int(string[middle:]), times - 1)
-        return blink(int(string[:middle]), times - 1) + blink(int(string[middle:]), times - 1)
+        result = blink(int(string[:middle]), times - 1) + blink(int(string[middle:]), times - 1)
     else:
-        map[(element, times)] = blink(element * 2024, times - 1)
-        return blink(element * 2024, times - 1)
+        result = blink(element * 2024, times - 1)
+
+    map[(element, times)] = result
+    return result
 
 def blink_all(list, n_blinks):
     result = 0
