@@ -18,17 +18,25 @@ def parse_input(filename):
 
     return list
 
+map = {}
+
 def blink(element, times):
+    if (element, times) in map:
+        return map[(element, times)]
+
     if times == 0:
         return 1
 
     if element == 0:
+        map[(element, times)] = blink(1, times - 1)
         return blink(1, times - 1)
     elif len(str(element)) % 2 == 0:
         string = str(element)
         middle = len(string) // 2
+        map[(element, times)] = blink(int(string[:middle]), times - 1) + blink(int(string[middle:]), times - 1)
         return blink(int(string[:middle]), times - 1) + blink(int(string[middle:]), times - 1)
     else:
+        map[(element, times)] = blink(element * 2024, times - 1)
         return blink(element * 2024, times - 1)
 
 def blink_all(list, n_blinks):
@@ -44,5 +52,9 @@ list = parse_input('input.txt')
 with timer():
     # Part 1
     print(blink_all(list, 25))
+
+with timer():
+    # Part 2
+    print(blink_all(list, 75))
 
 
