@@ -1,3 +1,13 @@
+from contextlib import contextmanager
+import time
+
+@contextmanager
+def timer():
+    start = time.perf_counter()
+    yield
+    end = time.perf_counter()
+    print(f"Execution time: {end - start} seconds")
+
 def parse_input(filename):
     file = open(filename, "r")
     lines = file.readlines()
@@ -21,28 +31,24 @@ class Robot:
         self.position = position
         self.velocity = velocity
 
-    def move(self):
-        self.position = (self.position[0] + self.velocity[0], self.position[1] + self.velocity[1])
-
+    def move(self, times):
         x, y = self.position
-        grid_x, grid_y = self.grid_size
+        vx, vy = self.velocity
 
-        wrapped_x = x % grid_x
-        wrapped_y = y % grid_y
+        new_x = (x + vx * times) % self.grid_size[0]
+        new_y = (y + vy * times) % self.grid_size[1]
 
-        self.position = (wrapped_x, wrapped_y)
+        self.position = (new_x, new_y)
 
 class Grid:
-    quadrant_factors = [0, 0, 0, 0]
-
     def __init__(self, grid_size, robots):
         self.grid_size = grid_size
         self.robots = robots
+        self.quadrant_factors = [0, 0, 0, 0]
 
     def move_robots(self, seconds):
         for robot in self.robots:
-            for _ in range(seconds):
-                robot.move()
+            robot.move(seconds)
 
             quadrant = self.find_quadrant(robot.position[0], robot.position[1])
 
