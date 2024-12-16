@@ -1,79 +1,31 @@
-import heapq
+from utils import parse_input, dijkstra, get_optimal_nodes, print_grid
 import sys
-
-def parse_input(file_name):
-    file = open(file_name, 'r')
-
-    walls = set()
-    start_position = None
-    end_position = None
-
-    for i, line in enumerate(file):
-        for j, char in enumerate(line):
-            if char == '#':
-                walls.add((j, i))
-            elif char == 'S':
-                start_position = (j, i)
-            elif char == 'E':
-                end_position = (j, i)
-
-    return walls, start_position, end_position
-
-def dijkstra(walls, start_position):
-    # 0 = north, 1 = east, 2 = south, 3 = west
-    movements = [(0, -1), (1, 0), (0, 1), (-1, 0)]
-    heading = 1 # start facing east
-
-    distances = {}
-    pq = []
-
-    distances[(start_position, heading)] = 0
-    heapq.heappush(pq, (0, start_position, heading))
-
-    while pq:
-        distance, position, heading = heapq.heappop(pq)
-
-        if distances[(position, heading)] < distance:
-            continue
-
-        # Handle turns
-        for movement in movements:
-            next_heading = movements.index(movement)
-
-            # Skip if it's the same heading
-            if next_heading == heading:
-                continue
-
-            # Skip if it's a 180 degree turn
-            if abs(next_heading - heading) == 2:
-                continue
-
-            new_distance = distance + 1000
-            if (position, next_heading) not in distances or distances[(position, next_heading)] > new_distance + 1000:
-                distances[(position, next_heading)] = new_distance
-                heapq.heappush(pq, (new_distance, position, next_heading))
-
-        # Handle moving forward
-        dx, dy = movements[heading]
-        next_position = (position[0] + dx, position[1] + dy)
-
-        if next_position in walls:
-            continue
-
-        new_distance = distance + 1
-
-        if (next_position, heading) not in distances or distances[(next_position, heading)] > new_distance:
-            distances[(next_position, heading)] = new_distance
-            heapq.heappush(pq, (new_distance, next_position, heading))
-
-    return distances
 
 walls, start_position, end_position = parse_input('input.txt')
 
 distances = dijkstra(walls, start_position)
 minimum_distance = sys.maxsize
+minimum_distance_position = None
 
 for h in range(4):
-    minimum_distance = min(minimum_distance, distances[(end_position, h)])
+    if distances[(end_position, h)] < minimum_distance:
+        minimum_distance = distances[(end_position, h)]
+        minimum_distance_position = (end_position, h)
 
+# Part 1
+print("Part 1")
 print(minimum_distance)
+
+#Part 2
+print("Part 2")
+
+from_start = distances
+
+optimum_end_postion, optimum_end_heading = minimum_distance_position
+flipped_heading = (optimum_end_heading + 2) % 4
+
+from_end = dijkstra(walls, optimum_end_postion, flipped_heading)
+
+nodes = get_optimal_nodes(end_position, optimum_end_heading, from_start, from_end, minimum_distance)
+
+print(len(nodes))
