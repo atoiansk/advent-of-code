@@ -77,5 +77,3 @@ class Program:
             return self.reg_b
         elif operand == 6:
             return self.reg_c
-
-
