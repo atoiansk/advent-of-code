@@ -11,7 +11,7 @@ print(dijskstra(7, (0, 0), bytes_set, (6, 6)))
 bytes = parse_input("input.txt")
 bytes_set = set(bytes[:1024])
 
-print(dijskstra(71, (0, 0), bytes[:1024], (70, 70)))
+print(dijskstra(71, (0, 0), bytes_set, (70, 70)))
 
 # Part 2 - Test
 bytes = parse_input("test_input.txt")
