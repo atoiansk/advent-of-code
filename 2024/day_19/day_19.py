@@ -1,6 +1,3 @@
-from collections import deque
-from time import sleep
-
 def parse_input(file_name):
     file = open(file_name, "r")
     lines = file.readlines()
