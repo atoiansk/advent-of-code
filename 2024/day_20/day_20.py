@@ -1,16 +1,20 @@
-from utils import parse_input, dfs, find_cheats
+from utils import parse_input, find_cheats
 
 walls, start_position, end_position = parse_input("input.txt")
 
-path = dfs(walls, start_position, end_position)
-
-cheats = find_cheats(path, walls, end_position)
+def over_100(cheats):
+    over_100 = 0
+    for cheat in cheats.values():
+        if cheat >= 100:
+            over_100 += 1
+    return over_100
 
 # Part 1
-over_100 = 0
+cheats = find_cheats(walls, start_position, end_position, 2)
 
-for cheat in cheats.values():
-    if cheat >= 100:
-        over_100 += 1
+print(over_100(cheats))
 
-print(over_100)
+# Part 2
+cheats = find_cheats(walls, start_position, end_position, 20)
+
+print(over_100(cheats))
