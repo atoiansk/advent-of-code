@@ -42,24 +42,7 @@ def find_path(start, end, keypad):
 
     return shortest_paths
 
-def find_all_paths(keypad, combination, start_char = 'A'):
-    start = keypad[start_char]
-    paths = set()
-    paths.add('')
-
-    for char in combination:
-        end = keypad[char]
-
-        new_paths = find_path(start, end, keypad)
-
-        paths_copy = paths.copy()
-        paths = set()
-        for path in paths_copy:
-            for new_path in new_paths:
-                paths.add(path + new_path)
-
-        start = end
-    return paths
+cache = {}
 
 def find_minimal_length(start, end, times, keypad):
     robot_keypad = {
@@ -70,6 +53,9 @@ def find_minimal_length(start, end, times, keypad):
         'v': (1, 1)
     }
 
+    if (start, end, times) in cache:
+        return cache[(start, end, times)]
+
     paths = find_path(start, end, keypad)
 
     if times == 0:
@@ -77,14 +63,16 @@ def find_minimal_length(start, end, times, keypad):
 
     minimal_length = 1<<60
     for path in paths:
-        path = "A" + path
         cost = 0
+        current_start = robot_keypad['A']
         for i in range(len(path)-1):
-            a, b = robot_keypad[path[i]], robot_keypad[path[i+1]]
-            cost += find_minimal_length(a, b, times - 1, robot_keypad)
+            current_end = robot_keypad[path[i]]
+            cost += find_minimal_length(current_start, current_end, times - 1, robot_keypad)
+            current_start = current_end
 
         minimal_length = min(cost, minimal_length)
 
+    cache[(start, end, times)] = minimal_length
     return minimal_length
 
 def get_code_cost(code, times=2):
@@ -102,10 +90,11 @@ def get_code_cost(code, times=2):
         '9': (2, 0)
     }
 
-    code = "A" + code
+    start = door_key_pad['A']
     cost = 0
-    for i in range(len(code)-1):
-        a, b = door_key_pad[code[i]], door_key_pad[code[i+1]]
-        char_cost = find_minimal_length(a, b, times, door_key_pad)
+    for digit in code:
+        end = door_key_pad[digit]
+        char_cost = find_minimal_length(start, end, times, door_key_pad)
         cost += char_cost
+        start = end
     return cost
