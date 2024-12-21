@@ -1,4 +1,4 @@
-from utils import get_complexity
+from utils import get_complexity, find_all_paths, find_path
 from contextlib import contextmanager
 import time
 
@@ -19,3 +19,7 @@ with timer():
         sum += get_complexity(line.strip('\n'))
 
     print(sum)
+
+
+
+

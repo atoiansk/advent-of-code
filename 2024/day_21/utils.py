@@ -16,13 +16,13 @@ def find_path(start, end, keypad):
     # distance, node, path
     heapq.heappush(pq, (0, start, ''))
 
-    shortest_paths = []
+    shortest_paths = set()
 
     while pq:
         distance, node, path = heapq.heappop(pq)
 
         if node == end:
-            shortest_paths.append(path + 'A')
+            shortest_paths.add(path + 'A')
             continue
 
         if distances[node] < distance:
@@ -42,12 +42,14 @@ def find_path(start, end, keypad):
 
     return shortest_paths
 
-def find_all_paths(keypad, combination):
-    start = keypad['A']
+def find_all_paths(keypad, combination, start_char = 'A'):
+    start = keypad[start_char]
     paths = set()
     paths.add('')
+
     for char in combination:
         end = keypad[char]
+
         new_paths = find_path(start, end, keypad)
 
         paths_copy = paths.copy()
@@ -74,6 +76,20 @@ def get_complexity(combination, number_of_robots=3):
         '9': (2, 0)
     }
 
+    total_minimal_length = 0
+    start_char = 'A'
+    for char in combination:
+        current_paths = find_all_paths(door_key_pad, char, start_char)
+
+        total_minimal_length += find_minimal_length(current_paths, number_of_robots - 1)
+
+        start_char = char
+
+    complexity = total_minimal_length * int(combination.strip('A'))
+
+    return complexity
+
+def find_minimal_length(combinations, times):
     robot_keypad = {
         'A': (2, 0),
         '<': (0, 1),
@@ -82,19 +98,13 @@ def get_complexity(combination, number_of_robots=3):
         'v': (1, 1)
     }
 
-    current_paths = find_all_paths(door_key_pad, combination)
-    minimum_length = min([len(x) for x in current_paths])
+    if times == 0:
+        return min([len(x) for x in combinations])
 
-    for i in range(number_of_robots - 1):
-        current_paths_copy = current_paths.copy()
-        current_paths = set()
+    minimal_length = float('inf')
+    for combination in combinations:
+        new_combinations = find_all_paths(robot_keypad, combination)
 
-        for path in current_paths_copy:
-            if len(path) == minimum_length:
-                current_paths = current_paths | find_all_paths(robot_keypad, path)
+        minimal_length = min(minimal_length, find_minimal_length(new_combinations, times - 1))
 
-        minimum_length = min([len(x) for x in current_paths])
-
-    complexity = minimum_length * int(combination.strip('A'))
-
-    return complexity
+    return minimal_length
