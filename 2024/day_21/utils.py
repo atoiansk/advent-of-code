@@ -65,8 +65,8 @@ def find_minimal_length(start, end, times, keypad):
     for path in paths:
         cost = 0
         current_start = robot_keypad['A']
-        for i in range(len(path)-1):
-            current_end = robot_keypad[path[i]]
+        for char in path:
+            current_end = robot_keypad[char]
             cost += find_minimal_length(current_start, current_end, times - 1, robot_keypad)
             current_start = current_end
 
