@@ -1,4 +1,4 @@
-from utils import get_complexity, find_all_paths, find_path
+from utils import find_all_paths, find_path, get_code_cost
 from contextlib import contextmanager
 import time
 
@@ -16,9 +16,12 @@ sum = 0
 # Part 1
 with timer():
     for line in lines:
-        sum += get_complexity(line.strip('\n'))
+        complexity = get_code_cost(line.strip('\n')) * int(line.strip('A\n'))
+        sum += complexity
 
     print(sum)
+
+# Part 2
 
 
 

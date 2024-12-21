@@ -61,7 +61,33 @@ def find_all_paths(keypad, combination, start_char = 'A'):
         start = end
     return paths
 
-def get_complexity(combination, number_of_robots=3):
+def find_minimal_length(start, end, times, keypad):
+    robot_keypad = {
+        'A': (2, 0),
+        '<': (0, 1),
+        '>': (2, 1),
+        '^': (1, 0),
+        'v': (1, 1)
+    }
+
+    paths = find_path(start, end, keypad)
+
+    if times == 0:
+        return min([len(x) for x in paths])
+
+    minimal_length = 1<<60
+    for path in paths:
+        path = "A" + path
+        cost = 0
+        for i in range(len(path)-1):
+            a, b = robot_keypad[path[i]], robot_keypad[path[i+1]]
+            cost += find_minimal_length(a, b, times - 1, robot_keypad)
+
+        minimal_length = min(cost, minimal_length)
+
+    return minimal_length
+
+def get_code_cost(code, times=2):
     door_key_pad = {
         'A': (2, 3),
         '0': (1, 3),
@@ -76,35 +102,10 @@ def get_complexity(combination, number_of_robots=3):
         '9': (2, 0)
     }
 
-    total_minimal_length = 0
-    start_char = 'A'
-    for char in combination:
-        current_paths = find_all_paths(door_key_pad, char, start_char)
-
-        total_minimal_length += find_minimal_length(current_paths, number_of_robots - 1)
-
-        start_char = char
-
-    complexity = total_minimal_length * int(combination.strip('A'))
-
-    return complexity
-
-def find_minimal_length(combinations, times):
-    robot_keypad = {
-        'A': (2, 0),
-        '<': (0, 1),
-        '>': (2, 1),
-        '^': (1, 0),
-        'v': (1, 1)
-    }
-
-    if times == 0:
-        return min([len(x) for x in combinations])
-
-    minimal_length = float('inf')
-    for combination in combinations:
-        new_combinations = find_all_paths(robot_keypad, combination)
-
-        minimal_length = min(minimal_length, find_minimal_length(new_combinations, times - 1))
-
-    return minimal_length
+    code = "A" + code
+    cost = 0
+    for i in range(len(code)-1):
+        a, b = door_key_pad[code[i]], door_key_pad[code[i+1]]
+        char_cost = find_minimal_length(a, b, times, door_key_pad)
+        cost += char_cost
+    return cost
