@@ -20,25 +20,18 @@ def find_max_group(route, routes):
 
 routes = parse_input("input.txt")
 
-valid_routes = set()
+max_route_length = 0
+longest_route = None
 
 for key, route in routes.items():
-    for i in reversed(range(2, len(route))):
-        groups = list(itertools.combinations(route, i))
-        for group in groups:
-            if validate_group(group, routes):
-                new_group = group + (key,)
-                group_list = list(new_group)
-                group_list.sort()
-                valid_routes.add(','.join(group_list))
+    max_group = find_max_group(route, routes)
+    max_group += (key,)
+    group_list = list(max_group)
+    if len(group_list) > max_route_length:
+        max_route_length = len(group_list)
+        longest_route = group_list
 
-max_length = 0
-max_length_route = ""
-for route in valid_routes:
-    if len(route) > max_length:
-        max_length = len(route)
-        max_length_route = route
-
-print(max_length_route)
+longest_route.sort()
+print(','.join(longest_route))
 
 
