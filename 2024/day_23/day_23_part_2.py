@@ -33,5 +33,3 @@ for key, route in routes.items():
 
 longest_route.sort()
 print(','.join(longest_route))
-
-
