@@ -10,7 +10,7 @@ for key, route in routes.items():
 
     for pair in pairs:
         pair1, pair2 = pair
-        if pair2 in routes[pair1] or pair1 in routes[pair2]:
+        if pair2 in routes[pair1]:
             elements = [key, pair1, pair2]
             elements.sort()
             three_way_routes.add(','.join(elements))
