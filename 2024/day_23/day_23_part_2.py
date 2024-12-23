@@ -11,7 +11,7 @@ def validate_group(group, routes):
     return True
 
 def find_max_group(route, routes):
-    for i in reversed(range(2, len(route))):
+    for i in reversed(range(2, len(route) + 1)):
         groups = list(itertools.combinations(route, i))
         for group in groups:
             if validate_group(group, routes):
